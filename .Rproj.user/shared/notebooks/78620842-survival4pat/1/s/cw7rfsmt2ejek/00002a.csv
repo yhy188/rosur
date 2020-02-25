@@ -1,0 +1,5 @@
+"0","#covax<-as.numeric(covax)
+obj21x <- rmst2(df.rmst$time, df.rmst$status, df.rmst$treat, tau=360, covariates = covax)#
+"
+"2","Error in rep(fitc1$surv, table(y10)) : invalid 'times' argument
+"

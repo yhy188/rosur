@@ -1,0 +1,17 @@
+exportPattern("^[[:alpha:]]+")
+
+import(survival)
+import(ggplot2)
+import(aod)
+importFrom("stats", "pchisq", "pnorm", "quantile", "rbinom", "rexp", "rnorm", "runif")
+
+S3method(summary, DTR)
+S3method(print, DTR)
+S3method(print, summary.DTR)
+S3method(plot, DTR)
+
+S3method(summary, CHR)
+S3method(print, CHR)
+S3method(print, summary.CHR)
+S3method(plot, CHR)
+

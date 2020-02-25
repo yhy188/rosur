@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1574220313372.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2658416358",
+    "id" : "C81CA003",
+    "lastKnownWriteTime" : 1574220870,
+    "last_content_update" : 1574220870415,
+    "path" : "~/Downloads/Rpkg/rosur/Surv.R",
+    "project_path" : "Surv.R",
+    "properties" : {
+        "cursorPosition" : "0,0",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

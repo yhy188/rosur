@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1577622288723.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1382273346",
+    "id" : "803247C5",
+    "lastKnownWriteTime" : 1576677189,
+    "last_content_update" : 1576677189,
+    "path" : "~/Downloads/Rpkg/CORopt/man/cvmnetwork.Rmd",
+    "project_path" : null,
+    "properties" : {
+        "cursorPosition" : "16,0",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

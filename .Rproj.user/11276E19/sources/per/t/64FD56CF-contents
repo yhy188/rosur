@@ -1,0 +1,31 @@
+---
+title: "rosur"
+author: "haiyan yu"
+date: "11/19/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#robust opt
+
+#Software 
+Matlab 
+yalmip + lpsolve + matlab 求解混合整数线性规划问题（MIP/MILP）
+
+Python 
+The Price of Robustness
+https://mp.weixin.qq.com/s?__biz=Mzg2MTA0NzA0Mw==&mid=2247489738&idx=1&sn=d3235cac119ecf4bda040be16e5bee64&chksm=ce1c48a6f96bc1b01f4cdab85e11e5d8dee0ef1baeebcd5518bd578c4497a730542b131ac907&mpshare=1&scene=1&srcid=&sharer_sharetime=1574221606908&sharer_shareid=14497eed8c0a5433bb3e165bffe55937&pass_ticket=JDeN5u5bJ5LPQFwkv4h%2BN0XxTCfSZdmGboYyyySP89Jc5PBk2Ye%2BRd5oCDVU0YQC#rd
+
+https://github.com/Feeling-well/robust-optimization
+## R Markdown
+
+```{r}
+library(survival)
+with(aml, Surv(time, status))
+survfit(Surv(time, status) ~ ph.ecog, data=lung)
+Surv(heart$start, heart$stop, heart$event) 
+
+```

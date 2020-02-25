@@ -1,0 +1,24 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1579538649517.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1214916901",
+    "id" : "64FD56CF",
+    "lastKnownWriteTime" : 1574221644,
+    "last_content_update" : 1574221644,
+    "path" : "~/Downloads/Rpkg/rosur/man4ro/rosur.Rmd",
+    "project_path" : "man4ro/rosur.Rmd",
+    "properties" : {
+        "cursorPosition" : "31,0",
+        "last_setup_crc32" : "",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

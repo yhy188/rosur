@@ -1,0 +1,6 @@
+"0","  "
+"0","   library(""ggplot2"")"
+"2","Registered S3 method overwritten by 'dplyr':
+  method           from
+  print.rowwise_df     
+"

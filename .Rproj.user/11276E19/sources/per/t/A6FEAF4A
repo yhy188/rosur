@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1574220111100.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1747030899",
+    "id" : "A6FEAF4A",
+    "lastKnownWriteTime" : 1451574168,
+    "last_content_update" : 1451574168,
+    "path" : "~/Downloads/Rpkg/rosur/R/CHRestimate.R",
+    "project_path" : "R/CHRestimate.R",
+    "properties" : {
+        "cursorPosition" : "245,24",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

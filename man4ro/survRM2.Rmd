@@ -1,0 +1,30 @@
+---
+title: "survRM2"
+author: "haiyan yu"
+date: "11/25/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+https://cran.r-project.org/web/packages/survRM2/index.html
+https://cran.r-project.org/web/packages/survRM2adapt/index.html
+```{r}
+library(survival)
+?pbc
+
+library(survRM2)
+library(survRM2adapt)
+D = rmst2.sample.data()
+nrow(D)
+```
+
+```{r}
+
+```
+
+
+

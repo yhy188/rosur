@@ -1,0 +1,429 @@
+---
+title: "Cvmnet"
+author: "haiyan yu"
+date: "11/30/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## CVM model with treatment networks
+CVMtest.rmd
+
+```{r}
+library("roxygen2")
+library("readxl")
+library("CORopt")
+```
+
+```{r}
+#########
+data <-
+ suppressWarnings(data <-read_excel("~/Downloads/Rpkg/CORopt/data/USyu_AB_Med0UA1c_test.xlsx"))
+#data <- USyu_AB_Med0UA1c_test
+#summary(data)
+names(data)
+head(data, 1)
+datax <- data[, c(6:21)]
+names(datax) <-
+  c(
+    "x1",
+    "x2",
+    "x3",
+    "x4",
+    "x5",
+    "x6",
+    "x7",
+    "x8",
+    "x9",
+    "x10",
+    "x11",
+    "x12",
+    "a1",
+    "a2",
+    "a3",
+    "y"
+  )
+head(datax)
+```
+
+# Data Stream
+
+Since there are missing and factor ('other') in the varible 'x2', those rows are removed by
+
+```{r}
+datax<-datax[datax$x2!='Other',]
+datax<-datax[datax$x2!='?',]
+datax$x2<-as.numeric(datax$x2)
+datax <- datax[complete.cases(datax), ]
+```
+# Data processing
+
+```{r}
+
+dataxx <- datax
+dataxx[dataxx$a1 != 0, "a1"] <- 1
+dataxx[dataxx$a2 != 0, "a2"] <- 1
+dataxx[dataxx$a3 != 0, "a3"] <- 1
+#######
+dataxx <- data.frame(dataxx)#summary(cweight) Inf
+#######
+```
+## Cweight: call for caseweight
+
+```{r}
+cweight_df <- data.frame(dataxx)
+for (i in seq(1:3)) {
+  dataxy <- (dataxx[, c(1:12, 12 + i)])
+  head(dataxy)
+  names(dataxy) <-
+    c("x1",
+      "x2",
+      "x3",
+      "x4",
+      "x5",
+      "x6",
+      "x7",
+      "x8",
+      "x9",
+      "x10",
+      "x11",
+      "x12",
+      "a")
+  cor_temp <- caseweight(dataxy)
+  #rename, denominator = in caseweight
+  #dataxy$sw <- c.weight
+  cweight_df <- cbind(cweight_df, cor_temp)
+}
+head(cweight_df)
+names(cweight_df) <-
+  c(
+    "x1",
+    "x2",
+    "x3",
+    "x4",
+    "x5",
+    "x6",
+    "x7",
+    "x8",
+    "x9",
+    "x10",
+    "x11",
+    "x12",
+    "a1",
+    "a2",
+    "a3",
+    "y",
+    "sw1",
+    "sw2",
+    "sw3"
+  )
+head(cweight_df)
+######
+
+```
+
+```{r}
+
+head(cweight_df)
+
+```
+
+```{r}
+n1<-sum(cweight_df$T)
+Ni<-nrow(cweight_df)
+n0n1=1-n1/Ni
+
+#############a1, control weight##################################
+library("ebal")
+cweight_df$T <- 0
+cweight_df[(cweight_df$a1 == 1) |
+             (cweight_df$a2 == 1) | (cweight_df$a3 == 1), "T"] <- 1
+
+cwdf_ebal <- data.frame(cweight_df)
+treatment   <- cwdf_ebal[, "T"]
+X           <- cwdf_ebal[, c(1:12, 20, 16)]
+treatment <- data.matrix(treatment)
+head(X)
+X<-data.frame(X)
+X<-X[complete.cases(X),]
+X<-data.matrix(X)
+X<-na.omit(X)
+X<-data.matrix(X)
+eb.out <- ebalance(X[,13],#Treatment =
+                    X[, c(1:12)])#X =
+summary(eb.out)
+```
+
+
+
+#Weights for the control group
+
+```{r}
+head(eb.out$w)
+
+head(cwdf_ebyw,1)
+#tm1all<-apply(cwdf_ebal[cwdf_ebal$T == 1,], 2, mean)
+tm0allw<-apply(cwdf_ebyw[cwdf_ebyw$T == 0,], 2, weighted.mean, w = eb.out$w)
+tm0all<-apply(cwdf_ebyw[cwdf_ebyw$T == 0,], 2, mean)
+
+#
+#tm1<-apply(cwdf_ebal[cwdf_ebal$T == 1,1:12], 2, mean)
+tm0w<-apply(cwdf_ebyw[cwdf_ebyw$T == 0,1:12], 2, weighted.mean, w = eb.out$w)
+tm0<-apply(cwdf_ebyw[cwdf_ebyw$T == 0,1:12], 2, mean)
+
+
+#  tm1.hat <- cwdf_ebal[cwdf_ebal$T == 1,"y"] - 0.780 #tm1all$y#-term4
+#  tm1.var <- (1 / n1^2) * sum(tm1.hat^2)
+#  tm1.se <- sqrt(tm1.var)
+
+  tm0w.hat <- cwdf_ebal[cwdf_ebal$T == 0,"y"] - 0.7693494 #tm0all$y#-term4
+  tm0w.var <- (1 / n0^2) * sum(tm0w.hat^2)
+  tm0w.se <- sqrt(tm0w.var)
+  
+    tm0.hat <- cwdf_ebal[cwdf_ebal$T == 0,"y"] - 0.7631373 #tm0all$y#-term4
+  tm0.var <- (1 / n0^2) * sum(tm0.hat^2)
+  tm0.se <- sqrt(tm0.var)
+  
+  
+  mu0summary <-
+    data.frame(
+      tm0alllw.y=round(0.7693494,3) ,
+      tm0alllw.yse=round(tm0w.se,3),
+      tm0alll.y=round(0.7631373,3),
+      tm0alll.yse=round(tm0.se,3)
+      )
+ mu0summary
+  
+```
+
+##Redar plot
+
+###ml_loveplot with ebalnce
+For the matched, Mean difference = apply (a1=1)-apply (a1=0,weight)=0,
+For the unmatched, Mean difference = apply (a1=1)-apply (a1=0),
+```{r}
+  MeanDifference<-tm1-tm0
+  MeanDifference <- data.frame(MeanDifference)
+  MeanDifference$Variables<-row.names(MeanDifference) 
+  names(MeanDifference)<-c("MeanDifference")
+  ebalMeanxdif<-MeanDifference[,c(2,1)]
+  head(ebalMeanxdif, 1)
+  ebalMeanxdif2<-ebalMeanxdif
+  ebalMeanxdif2$Methods<-rep("Unadjusted")
+  head(ebalMeanxdif2)
+          
+#  ebalMeanxdif20<-ebalMeanxdif2
+#         ebalMeanxdif20$Methods<-rep("Adjusted")
+#         ebalMeanxdif20$MeanDifference<-0
+
+  MeanDifference20<-tm1-tm0w
+  MeanDifference20 <- data.frame(MeanDifference20)
+  MeanDifference20$Variables<-row.names(MeanDifference20) 
+  names(MeanDifference20)<-c("MeanDifference")
+  ebalMeanxdif20<-MeanDifference20[,c(2,1)]
+  head(ebalMeanxdif20, 1)
+#  ebalMeanxdif2<-ebalMeanxdif
+  ebalMeanxdif20$Methods<-rep("Adjusted")
+  head(ebalMeanxdif20)
+  
+  
+  ebalMeanxdif<-ebalMeanxdif2
+  ebalMeanxdif<-rbind(ebalMeanxdif,ebalMeanxdif20)
+head(ebalMeanxdif,2)
+#
+
+#png("ebalMeanxdif.png", width = 4, height = 4, units = 'in', res = 300)
+p<-ml_loveplot(ebalMeanxdif)
+#dev.off()
+p
+```
+
+Plot radar
+```{r}
+#write.csv(ebalMeanxdif,"ebalMeanxdif_T.csv")
+library(ggplot2)
+library(ggradar)
+library(scales)
+eb.T<-read.csv('~/Downloads/Rpkg/CORopt/data_temp/ebalMeanxdif2_T.csv')
+head(eb.T)
+gmin=min(eb.T[1:2,2:13])
+gmin<-round(gmin,2)-0.01
+gmid=0
+gmax=max(eb.T[1:2,2:13])
+gmax<-round(gmax,2)+0.01
+ggradar(eb.T[1:2,],values.radar = c(gmin,gmid,gmax),grid.min = gmin,
+        grid.mid = gmid, grid.max =  gmax,
+        group.line.width = 1, group.point.size = 2)
+
+
+```
+
+## AIPW for each treatments
+
+Each of the other was regarded as missing not at random (patterns)
+###AIPW for u1
+AIPW : mean for each subgroup, then comparing with control (cbal weighet: 0.7693494) ; (raw: 0.7631373)
+
+
+##IPW for mu1
+
+```{r}
+library(CORopt)
+cwdf_ebalT <- cwdf_ebal[treatment == 1,]
+head(cwdf_ebalT)
+cwdf_ebalT <- data.frame(cwdf_ebalT)
+head(cwdf_ebalT,1)
+
+
+df <- data.frame()
+Nj = 4
+nj=Nj - 1
+#j=1
+ni <- nrow(cwdf_ebalT)
+head(cwdf_ebalT)
+
+cweight_dfinT<-cweight_dfinT(cwdf_ebalT)
+
+head(cweight_dfinT)
+nrow(cweight_dfinT)
+mu_ctrom_weight <- 0.769
+mu_ctrom_raw<-mu_ctrom_weight
+#mu_ctrom_raw <- 0.763
+us130.df<-data.frame()
+us130dia<-data.frame()
+
+for (j in seq(1:nj)) {
+  head(cweight_df,1)
+  a <- cweight_df[, c(12 + j)]
+  nrow(a)
+  nji<-sum(a)
+  y <- cweight_df[, 16]
+  w <- cweight_df[, 16 + j]
+  cwdfT.mean <- apply(cweight_df[a == 1,], 2, mean)
+  cwdfT.mean <- data.frame(cwdfT.mean)
+  head(cwdfT.mean)
+  ymean <- cwdfT.mean[16, ]
+  # standard deviration
+  cwdfT.sd <- sd(cweight_df[a == 1, "y"])
+  sdctrom = cwdfT.sd
+  
+  #variance of att with the control not weighted
+  seatt<-sqrt(sdctrom ^2 ++ tm0.var )
+  
+  #drtmle: Doubly-Robust Inference in R
+   ebalT_ipw <- mean(a * y * w )
+#   ebalT_ipw <- sum(a * y * w ) /nn      not ni
+   #AIPW=IPW estimator+
+   ebalT_aipw <- mean(a * y * w + (1-a* w) * cwdfT.mean[16,])#
+  #AIPW=GCOMP estimator+
+ # ebalT_aipw <- cwdfT.mean[16,] +mean(a *  w * (y -cwdfT.mean[16,]))#   
+  attaipw<-ebalT_aipw-mu_ctrom_raw
+#https://cran.r-project.org/web/packages/CausalGAM/index.html  
+  cwdf_mu <-
+    data.frame(
+      j,
+      round(attaipw,3) ,
+      round(ymean,3),
+      round(ebalT_aipw,3)
+#      ,mu_ctrom_raw
+      ,muctrom=mu_ctrom_raw
+      , round(sdctrom, 3),
+      round(seatt, 3)
+    )
+  names(cwdf_mu)<-c("j","attaipw","y1rawmean",#"ymean_ebrew","ymean_raw",
+                    "ebalT_aipw","muctrom","sdctrom",
+      "seatt_mu0raw")
+  df <- rbind(df, cwdf_mu)
+  
+  
+  term1 <- rep(0, ni)
+  term2 <- rep(0, ni)
+  term3 <- rep(0, ni)
+#  term4 <- rep(0, ni)
+nn<-nrow(data.frame(y))
+#improtant: not ni; nn
+term1<- (a*y * w)
+term2<-(rep(1, nn) * cwdfT.mean[16, ]) 
+term3<- (a  * w * cwdfT.mean[16, ])
+
+#n0<-nrow(cwdf_ebyw[cwdf_ebyw$T == 0,1:12])
+#term4<- n0 *tm0w
+tm0allw
+
+ATE.AIPW.hat <- (1/nn) * (sum(term1) + sum(term2) - sum(term3) )-mu_ctrom_raw#tm0allw[,"y"]
+ATE.AIPW.hat 
+#ATE.AIPW.hat <-    (sum(a * y * w - a * cwdfT.mean[16, ] * w) + ni * cwdfT.mean[16, ]) / ni
+ #  attaipw<-ebalT_aipw-mu_ctrom_raw
+  I.hat <- term1 - term2 - term3  - ATE.AIPW.hat#-term4
+  AIPW.sand.var <- (1 / ni^2) * sum(I.hat^2)
+  AIPW.sand.se <- sqrt(AIPW.sand.var)
+
+  ATE.AIPW.sand.var <- AIPW.sand.var + tm0w.var 
+  ATE.AIPW.sand.se <- sqrt(ATE.AIPW.sand.var)
+
+  
+    head(ATE.AIPW.sand.se)
+  us130dia <-
+    data.frame(
+    s.id=1,
+    t.id=j,
+    mean=round(attaipw,3)
+#    mean=round(ATE.AIPW.hat,3)
+     ,sd=round(AIPW.sand.se,3)
+    ,n=nji
+   ,attse=round(ATE.AIPW.sand.se,3)
+    )
+  head(us130dia)
+  names(us130dia)<-c("s.id","t.id","mean","sd","n","attse")
+  us130.df <- rbind(us130.df, us130dia)
+}
+head(df)
+head(I.hat)
+head(us130.df,5)
+```
+
+#Match
+```{r}
+###matchit
+library("MatchIt")
+head(cweight_df, 1)
+cvmformula<-T~x1+x2+x3+x4+x5+x6+x7+x8+x9+x10+x11+x12
+mout<-matchit(cvmformula, cweight_df, method = "nearest", distance = "logit",
+        distance.options = list(), 
+        reestimate = FALSE)
+summary(mout)
+mindex<-mout$match.matrix[,1]
+
+#cweight_df[mindex[1],]
+cwdf.mat<-cweight_df[mindex,]
+
+cwdfmat.mean <- apply(cwdf.mat, 2, mean)
+cwdfmat.mean
+csdfc.sd<-sd(cwdf.mat[,16])
+
+```
+
+# CVM networks
+
+```{r}
+ ##
+```
+
+```{r}
+#us130dia<-networkmetalearning
+## Prepare package and working directory.
+library("pcnetmeta")
+
+head(us130.df,16)
+nma.networkplot(s.id, t.id, data = us130.df,
+trtname = c("Control", "metformin", "glyburide")#, "glyburide-metformin","Insulin"
+,weight.edge = TRUE, adjust.thick = 50,
+weight.node = TRUE, adjust.node.size = 10,
+node.col = "orange", edge.col = "black", text.cex = 1,
+adjust.figsizex = 1.5, adjust.figsizey = 1.5)
+```
+
+

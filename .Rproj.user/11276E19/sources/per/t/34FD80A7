@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1577622454386.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "307505825",
+    "id" : "34FD80A7",
+    "lastKnownWriteTime" : 1577175099,
+    "last_content_update" : 1577175099,
+    "path" : "~/Downloads/Rpkg/CORopt/mABtest/causalAB.Rmd",
+    "project_path" : null,
+    "properties" : {
+        "cursorPosition" : "78,0",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}
